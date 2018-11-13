@@ -23,7 +23,7 @@ const getProfile = async data => {
   void data;
 
   return {
-    data: { userName: 'robert', fullName: 'Robert Denir Ona' }
+    userName: 'robert', fullName: 'Robert Denir Ona'
   };
 };
 

@@ -56,13 +56,17 @@ const registerChannel = channel => {
       return;
     }
 
-    const result = (await handler(data)) || {};
+    const dataFromHandler = (await handler(data)) || {};
 
     if (!data.correlationId) {
       return;
     }
 
-    result.correlationId = data.correlationId;
+    const result = {
+      correlationId: data.correlationId,
+      data: dataFromHandler
+    };
+
     evt.sender.send(TOPIC, result);
   });
 };
