@@ -1,0 +1,14 @@
+{
+  "extends": "eslint-config-jsbites",
+  "rules": {
+    "indent": "off",
+    "space-before-function-paren": "off",
+    "max-len": "off",
+    "object-curly-spacing": "off",
+    "operator-assignment": "off"
+  },
+  "globals": {
+    "Set": true,
+    "Map": true
+  }
+}

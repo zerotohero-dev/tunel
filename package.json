@@ -1,0 +1,29 @@
+{
+  "name": "tunel",
+  "version": "0.0.1",
+  "description": "tunel is a RESTful message tunnel over IPC.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsbites/tunel.git"
+  },
+  "keywords": [
+    "tunnel",
+    "tunneling",
+    "REST",
+    "IPC",
+    "electron",
+    "channel",
+    "EventEmitter"
+  ],
+  "author": "Volkan Özçelik <me@volkan.io> (https://volkan.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsbites/tunel/issues"
+  },
+  "homepage": "https://github.com/jsbites/tunel#readme"
+}

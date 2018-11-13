@@ -1,3 +1,12 @@
+```text
+  ___                 /
+    _-_-  _/\____    / __\\__
+ _-_-__  / ,-. -|   /  -  ,-.`-.
+    _-_- `( o )--  /  --( o )-'
+           `-'    /      `-'
+tunel (n): RESTful message tunneling over IPC.
+```
+
 MIT License
 
 Copyright (c) 2018 Byte-Sized JavaScript
