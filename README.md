@@ -37,10 +37,10 @@ addRoute({
 ```javascript
 // Electron renderer thread
 
-import tunel from 'tunel';
+import request from 'tunel';
 
 // tunel has a REST…ish API
-const response = await tunel({
+const response = await request({
   method: 'GET',
   url: '/api/v1/profile',
   data: { some: 'payload' },
