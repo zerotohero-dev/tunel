@@ -41,6 +41,10 @@ const registerChannel = channel => {
       return;
     }
 
+    if (!result.status) {
+      result.status = 500;
+    }
+
     reject(result);
   });
 };
