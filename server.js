@@ -11,7 +11,7 @@
  * environment (for, i.e., electron main thread),
  */
 
-const TOPIC = 'IPR_REQUEST';
+const TOPIC = '__TUNEL_REQUEST__';
 
 const routes = [];
 

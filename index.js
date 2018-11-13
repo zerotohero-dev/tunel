@@ -7,7 +7,7 @@
  */
 
 const resolvers = new Map();
-const TOPIC = 'IPR_REQUEST';
+const TOPIC = '__TUNEL_REQUEST__';
 
 const uuid = require('uuid/v4');
 
@@ -45,7 +45,7 @@ const registerChannel = channel => {
   });
 };
 
-const ipr = ({ method, url, data, headers }) => {
+const tunnel = ({ method, url, data, headers }) => {
   const path = url;
 
   if (!ipcChannel) {
@@ -64,4 +64,4 @@ const ipr = ({ method, url, data, headers }) => {
 
 export { registerChannel };
 
-export default ipr;
+export default tunnel;

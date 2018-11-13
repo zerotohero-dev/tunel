@@ -1,6 +1,6 @@
 {
   "name": "tunel",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "tunel is a RESTful message tunnel over IPC.",
   "main": "index.js",
   "scripts": {
@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/jsbites/tunel/issues"
   },
-  "homepage": "https://github.com/jsbites/tunel#readme"
+  "homepage": "https://github.com/jsbites/tunel#readme",
+  "dependencies": {
+    "uuid": "^3.3.2"
+  }
 }
