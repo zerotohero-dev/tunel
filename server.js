@@ -153,36 +153,36 @@ const registerChannel = channel => {
 };
 
 const app = {
-  get(routeInstance) {
-    const clonedRoute = Object.assign({}, routeInstance);
+  get(path, handler, options = {}) {
+    const clonedRoute = Object.assign({ path, handler }, options);
     clonedRoute.method = 'GET';
 
     addRoute(clonedRoute);
   },
 
-  post(routeInstance) {
-    const clonedRoute = Object.assign({}, routeInstance);
+  post(path, handler, options = {}) {
+    const clonedRoute = Object.assign({ path, handler }, options);
     clonedRoute.method = 'POST';
 
     addRoute(clonedRoute);
   },
 
-  put(routeInstance) {
-    const clonedRoute = Object.assign({}, routeInstance);
+  put(path, handler, options = {}) {
+    const clonedRoute = Object.assign({ path, handler }, options);
     clonedRoute.method = 'PUT';
 
     addRoute(clonedRoute);
   },
 
-  patch(routeInstance) {
-    const clonedRoute = Object.assign({}, routeInstance);
+  patch(path, handler, options = {}) {
+    const clonedRoute = Object.assign({ path, handler }, options);
     clonedRoute.method = 'PATCH';
 
     addRoute(clonedRoute);
   },
 
-  delete(routeInstance) {
-    const clonedRoute = Object.assign({}, routeInstance);
+  delete(path, handler, options = {}) {
+    const clonedRoute = Object.assign({ path, handler }, options);
     clonedRoute.method = 'DELETE';
 
     addRoute(clonedRoute);
