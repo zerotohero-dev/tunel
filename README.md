@@ -9,47 +9,55 @@ tunel (n): RESTful message tunneling over IPC.
 
 ## Quick Example
 
+Here’s the code for Electron’s **main thread**:
+
 ```javascript
-// Electron main thread
+//
+// Main Thread
+//
 
 const electron = require('electron');
 const channel = electron.ipcMain;
 
-const { addRoute, registerChannel } = require('tunel/server');
+const { app, registerChannel } = require('tunel/server');
 
 registerChannel(channel);
 
-const getProfile = async data => {
+// `app` API is similar to `express.js`
+app.get('/api/v1/profile', async data => {
   void data;
 
   return {
-    userName: 'robert', fullName: 'Robert Denir Ona'
+    userName: 'robert',
+    fullName: 'Robert Denir Ona'
   };
-};
-
-addRoute({
-  path: '/api/v1/profile',
-  method: 'GET',
-  handler: getProfile
 });
 ```
 
+Here’s the cod for Electron’s **renderer thread** (_i.e., the browser_):
+
 ```javascript
-// Electron renderer thread
+//
+// Renderer Thread
+//
 
 import request from 'tunel';
 
-// tunel has a REST…ish API
-const response = await request({
-  method: 'GET',
-  url: '/api/v1/profile',
-  data: { some: 'payload' },
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+const doFetch = async () => {
+  // `request` API is similar to `axios`.
+  const response = await request({
+    method: 'GET',
+    url: '/api/v1/profile',
+    data: { some: 'payload' },
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
 
-// Will log
-// `{ status: 200, data: { userName: 'robert', fullName: 'Robert Denir Ona' }}`
-console.log(response);
+  // Will log
+  // `{ status: 200, data: { userName: 'robert', fullName: 'Robert Denir Ona' }}`
+  console.log(response);
+};
+
+doFetch();
 ```
