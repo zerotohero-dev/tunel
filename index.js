@@ -6,15 +6,16 @@
  * tunel (n): RESTful message tunneling over IPC.
  */
 
-const resolvers = new Map();
-const TOPIC = '__TUNEL_REQUEST__';
-
 const uuid = require('uuid/v4');
 
-let ipcChannel = null;
+const { TOPIC } = require('./constants');
+
+const resolvers = new Map();
+
+let tunelChannel = null;
 
 const registerChannel = channel => {
-  ipcChannel = channel;
+  tunelChannel = channel;
 
   channel.on(TOPIC, (sender, result) => {
     void sender;
@@ -27,7 +28,13 @@ const registerChannel = channel => {
       return;
     }
 
-    const { resolve, reject } = resolvers.get(correlationId);
+    const resolver = resolvers.get(correlationId);
+
+    if (!resolver) {
+      return;
+    }
+
+    const { resolve, reject } = resolver;
 
     if (!resolve || !reject) {
       return;
@@ -41,31 +48,28 @@ const registerChannel = channel => {
       return;
     }
 
-    if (!result.status) {
-      result.status = 500;
-    }
-
-    reject(result);
+    reject(Object.assign({ status: 500 }, result));
   });
 };
 
 const tunnel = ({ method, url, data, headers }) => {
   const path = url;
 
-  if (!ipcChannel) {
+  if (!tunelChannel) {
     return Promise.reject({
       success: false,
-      reason: 'Register an IPC channel first!'
+      reason: 'Register a channel first!'
     });
   }
 
   return new Promise((resolve, reject) => {
     const correlationId = uuid();
+
     resolvers.set(correlationId, { resolve, reject });
-    ipcChannel.send(TOPIC, { correlationId, method, path, data, headers });
+
+    tunelChannel.send(TOPIC, { correlationId, method, path, data, headers });
   });
 };
 
-export { registerChannel };
-
-export default tunnel;
+exports.registerChannel = registerChannel;
+exports.default = tunnel;

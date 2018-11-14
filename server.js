@@ -11,14 +11,16 @@
  * environment (for, i.e., electron main thread),
  */
 
-const TOPIC = '__TUNEL_REQUEST__';
+const pathToRegexp = require('path-to-regexp');
+
+const { TOPIC } = require('./constants');
 
 const routes = [];
 
-const pathToRegexp = require('path-to-regexp');
-
 const addRoute = routeInstance => {
-  routes.push(routeInstance);
+  const clonedRoute = Object.assign({}, routeInstance);
+
+  routes.push(clonedRoute);
 };
 
 const resolveRoute = ({ path, method }) => {
@@ -31,9 +33,7 @@ const resolveRoute = ({ path, method }) => {
       return acc;
     }
 
-    const keys = [];
-
-    const pathMatches = pathToRegexp(route.path, keys).test(path);
+    const pathMatches = pathToRegexp(route.path).test(path);
 
     if (!pathMatches) {
       return acc;
@@ -50,7 +50,7 @@ const resolveRoute = ({ path, method }) => {
       return acc;
     }
 
-    acc.push({ route, keys });
+    acc.push(route);
 
     return acc;
   }, []);
@@ -59,15 +59,22 @@ const resolveRoute = ({ path, method }) => {
     return null;
   }
 
-  const handler = matchingRoutes[0].route.handler;
+  const { handler: matchingHandler, path: matchingPath } = matchingRoutes[0];
 
-  if (!handler) {
+  if (!matchingHandler) {
     return { handler: null, keys: null };
   }
 
-  const keys = matchingRoutes[0].keys;
+  const matchingKeys = [];
+  const matchingRegExp = pathToRegexp(matchingPath, matchingKeys);
+  const matchResult = matchingRegExp.exec(path);
 
-  return { handler, keys };
+  const params = matchingKeys.reduce((acc, key, index) => {
+    acc[key.name] = matchResult[index + 1];
+    return acc;
+  }, {});
+
+  return { handler: matchingHandler, params };
 };
 
 const tryParseJson = data => {
@@ -85,10 +92,24 @@ const tryParseJson = data => {
 
 const registerChannel = channel => {
   channel.on(TOPIC, async (evt, data) => {
-    const { handler, keys } = resolveRoute({
+    if (!data) {
+      return;
+    }
+
+    if (!data.path) {
+      return;
+    }
+
+    const resolvedRoute = resolveRoute({
       path: data.path,
-      method: data.method
+      method: data.method || 'get'
     });
+
+    if (!resolvedRoute) {
+      return;
+    }
+
+    const { handler, params } = resolvedRoute;
 
     if (!handler) {
       return;
@@ -101,7 +122,10 @@ const registerChannel = channel => {
     try {
       const result = {
         correlationId: data.correlationId,
-        data: tryParseJson((await handler(data, keys)) || {})
+        data: Object.assign(
+          {},
+          tryParseJson((await handler(data, params)) || {})
+        )
       };
 
       evt.sender.send(TOPIC, result);
