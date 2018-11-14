@@ -23,6 +23,10 @@ const addRoute = routeInstance => {
   routes.push(clonedRoute);
 };
 
+// TODO: Needs to be configurable!
+const DEBUG = true;
+const log = DEBUG ? (...stuff) => console.log(...stuff) : () => {};
+
 const resolveRoute = ({ path, method }) => {
   const matchingRoutes = routes.reduce((acc, route) => {
     if (!route) {
@@ -59,6 +63,9 @@ const resolveRoute = ({ path, method }) => {
     return null;
   }
 
+  // TODO: When multiple matches, favor the match that has the longest path.
+  log('matching routes', matchingRoutes);
+
   const { handler: matchingHandler, path: matchingPath } = matchingRoutes[0];
 
   if (!matchingHandler) {
@@ -69,12 +76,16 @@ const resolveRoute = ({ path, method }) => {
   const matchingRegExp = pathToRegexp(matchingPath, matchingKeys);
   const matchResult = matchingRegExp.exec(path);
 
-  const params = matchingKeys.reduce((acc, key, index) => {
-    acc[key.name] = matchResult[index + 1];
-    return acc;
-  }, {});
-
-  return { handler: matchingHandler, params };
+  return {
+    handler: matchingHandler,
+    params: matchingKeys.reduce((acc, key, index) => {
+      if (!key || !key.name) {
+        return acc;
+      }
+      acc[key.name] = matchResult[index + 1];
+      return acc;
+    }, {})
+  };
 };
 
 const tryParseJson = data => {
@@ -141,7 +152,45 @@ const registerChannel = channel => {
   });
 };
 
+const app = {
+  get(routeInstance) {
+    const clonedRoute = Object.assign({}, routeInstance);
+    clonedRoute.method = 'GET';
+
+    addRoute(clonedRoute);
+  },
+
+  post(routeInstance) {
+    const clonedRoute = Object.assign({}, routeInstance);
+    clonedRoute.method = 'POST';
+
+    addRoute(clonedRoute);
+  },
+
+  put(routeInstance) {
+    const clonedRoute = Object.assign({}, routeInstance);
+    clonedRoute.method = 'PUT';
+
+    addRoute(clonedRoute);
+  },
+
+  patch(routeInstance) {
+    const clonedRoute = Object.assign({}, routeInstance);
+    clonedRoute.method = 'PATCH';
+
+    addRoute(clonedRoute);
+  },
+
+  delete(routeInstance) {
+    const clonedRoute = Object.assign({}, routeInstance);
+    clonedRoute.method = 'DELETE';
+
+    addRoute(clonedRoute);
+  }
+};
+
 module.exports = {
   registerChannel,
-  addRoute
+  addRoute,
+  app
 };
