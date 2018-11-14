@@ -130,6 +130,12 @@ const registerChannel = channel => {
 
       evt.sender.send(TOPIC, result);
     } catch (ex) {
+      if (ex instanceof Error) {
+        evt.sender.send(TOPIC, { status: 500, error: { reason: ex.message } });
+
+        return;
+      }
+
       evt.sender.send(TOPIC, { status: 500, error: ex });
     }
   });

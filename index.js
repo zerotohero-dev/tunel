@@ -40,7 +40,7 @@ const registerChannel = channel => {
       return;
     }
 
-    resolvers.delete(result.correlationId);
+    resolvers.delete(correlationId);
 
     if (status === 200) {
       resolve({ status, data: result.data });
