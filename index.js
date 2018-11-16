@@ -6,6 +6,11 @@
  * tunel (n): RESTful message tunneling over IPC.
  */
 
+/**
+ * This is the client part, targeted for a browser-like environment
+ * (for, i.e., electron renderer thread).
+ */
+
 const uuid = require('uuid/v4');
 
 const { TOPIC } = require('./constants');

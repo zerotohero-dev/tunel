@@ -1,6 +1,6 @@
 {
   "name": "tunel",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "tunel is a RESTful message tunnel over IPC.",
   "main": "index.js",
   "scripts": {

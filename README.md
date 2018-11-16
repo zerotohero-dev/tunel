@@ -24,8 +24,8 @@ const { app, registerChannel } = require('tunel/server');
 registerChannel(channel);
 
 // `app` API is similar to `express.js`
-app.get('/api/v1/profile', async data => {
-  void data;
+app.get('/api/v1/profile', async req => {
+  void req;
 
   return {
     userName: 'robert',

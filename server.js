@@ -7,8 +7,8 @@
  */
 
 /**
- * This is the server part, and it typically lives on a node-like
- * environment (for, i.e., electron main thread),
+ * This is the server part. It typically lives in a node-like
+ * environment (for, i.e., electron main thread).
  */
 
 const pathToRegexp = require('path-to-regexp');
@@ -135,7 +135,7 @@ const registerChannel = channel => {
         correlationId: data.correlationId,
         data: Object.assign(
           {},
-          tryParseJson((await handler(data, params)) || {})
+          tryParseJson((await handler(Object.assign(data, { params }))) || {})
         )
       };
 
