@@ -102,18 +102,18 @@ const tryParseJson = data => {
 };
 
 const registerChannel = channel => {
-  channel.on(TOPIC, async (evt, data) => {
-    if (!data) {
+  channel.on(TOPIC, async (evt, request) => {
+    if (!request) {
       return;
     }
 
-    if (!data.path) {
+    if (!request.path) {
       return;
     }
 
     const resolvedRoute = resolveRoute({
-      path: data.path,
-      method: data.method || 'get'
+      path: request.path,
+      method: request.method || 'get'
     });
 
     if (!resolvedRoute) {
@@ -126,16 +126,20 @@ const registerChannel = channel => {
       return;
     }
 
-    if (!data.correlationId) {
+    if (!request.correlationId) {
       return;
     }
 
     try {
       const result = {
-        correlationId: data.correlationId,
+        correlationId: request.correlationId,
         data: Object.assign(
           {},
-          tryParseJson((await handler(Object.assign(data, { params }))) || {})
+          tryParseJson(
+            (await handler(
+              Object.assign(request, { body: request.data || {} }, { params })
+            )) || {}
+          )
         )
       };
 
