@@ -131,6 +131,22 @@ const registerChannel = channel => {
     }
 
     try {
+      const response = tryParseJson(
+        (await handler(
+          Object.assign(request, { body: request.data || {} }, { params })
+        )) || {}
+      );
+
+      if (response.status && response.status >= 300) {
+        evt.sender.send(TOPIC, {
+          correlationId: request.correlationId,
+          status: response.status,
+          error: { reason: response.reason, message: response.message }
+        });
+
+        return;
+      }
+
       const result = {
         correlationId: request.correlationId,
         data: Object.assign(
@@ -146,12 +162,20 @@ const registerChannel = channel => {
       evt.sender.send(TOPIC, result);
     } catch (ex) {
       if (ex instanceof Error) {
-        evt.sender.send(TOPIC, { status: 500, error: { reason: ex.message } });
+        evt.sender.send(TOPIC, {
+          correlationId: request.correlationId,
+          status: 500,
+          error: { reason: ex.message }
+        });
 
         return;
       }
 
-      evt.sender.send(TOPIC, { status: 500, error: ex });
+      evt.sender.send(TOPIC, {
+        correlationId: request.correlationId,
+        status: 500,
+        error: ex
+      });
     }
   });
 };

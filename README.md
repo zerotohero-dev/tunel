@@ -25,8 +25,13 @@ registerChannel(channel);
 
 // `app` API is similar to `express.js`
 app.get('/api/v1/profile', async req => {
+  // You can access req.body, req.params…
   void req;
 
+  // Unlike express, there is no `res` object.
+  // As soon as you return from the function, you’ll relay
+  // a response back.
+  // So, returning a JSON `json`, is similar to `res.send(json)`.
   return {
     userName: 'robert',
     fullName: 'Robert Denir Ona'
@@ -55,7 +60,8 @@ const doFetch = async () => {
   });
 
   // Will log
-  // `{ status: 200, data: { userName: 'robert', fullName: 'Robert Denir Ona' }}`
+  // `{ status: 200, data: { userName: 'robert',
+  // fullName: 'Robert Denir Ona' }}`
   console.log(response);
 };
 
