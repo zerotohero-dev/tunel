@@ -63,10 +63,9 @@ const resolveRoute = ({ path, method }) => {
     return null;
   }
 
-  // TODO: When multiple matches, favor the match that has the longest path.
-  log('matching routes', matchingRoutes);
-
-  const { handler: matchingHandler, path: matchingPath } = matchingRoutes[0];
+  const { handler: matchingHandler, path: matchingPath } = matchingRoutes.sort(
+    (a, b) => (a.length > b.length ? -1 : 1)
+  )[0];
 
   if (!matchingHandler) {
     return { handler: null, keys: null };
@@ -149,14 +148,7 @@ const registerChannel = channel => {
 
       const result = {
         correlationId: request.correlationId,
-        data: Object.assign(
-          {},
-          tryParseJson(
-            (await handler(
-              Object.assign(request, { body: request.data || {} }, { params })
-            )) || {}
-          )
-        )
+        data: response
       };
 
       evt.sender.send(TOPIC, result);

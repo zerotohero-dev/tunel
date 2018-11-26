@@ -50,9 +50,22 @@ registerClientChannel(clientChannel);
 addRoute({
   path: '/api/v1/:name/greet/:phrase',
   method: 'GET',
-  handler: async (data, params) => {
-    console.log(`handler ${JSON.stringify(data, null, 2)}`);
-    return { success: true, params };
+  handler: async res => {
+    console.log('in handler 1', res.correlationId);
+    return { success: true, from: 'handler1', params: res.params };
+  }
+});
+
+addRoute({
+  path: '/api/v1',
+  method: 'GET',
+  handler: async res => {
+    console.log('in handler 2', res.correlationId);
+
+    return {
+      success: true,
+      params: { foo: 'bar', from: 'handler2', name: 'volkan', phrase: 'hello' }
+    };
   }
 });
 
@@ -69,6 +82,21 @@ const run = async () => {
   assert(response.data.params.phrase === 'hello');
 
   console.log(`Incoming response: ${JSON.stringify(response, null, 2)}`);
+
+  {
+    const response = await request({
+      url: '/api/v1'
+    });
+
+    assert(response.status === 200);
+    assert(typeof response.data !== 'undefined');
+    assert(response.data.success === true);
+    assert(typeof response.data.params !== 'undefined');
+    assert(response.data.params.name === 'volkan');
+    assert(response.data.params.phrase === 'hello');
+
+    console.log(`Incoming response: ${JSON.stringify(response, null, 2)}`);
+  }
 };
 
 run();
